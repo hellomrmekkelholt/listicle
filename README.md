@@ -25,7 +25,7 @@ To get started with this project, follow these steps:
 
 1. Clone the repository:
    ```
-   git clone <repository-url>
+   git clone https://github.com/hellomrmekkelholt/listicle.git
    ```
 
 2. Navigate to the project directory:
@@ -38,9 +38,10 @@ To get started with this project, follow these steps:
    pnpm install
    ```
 
-4. Update the .env with the UTL of your LLM:
+4. Update the .env with the UTL of your LLM. The demo version used LM Studio:
    ```
-   XXX=localhost
+   OPENAI_API_URL=http://localhost:1234/v1
+   OPENAI_API_KEY=your_openai_api_key
    ```
 
 5. Run the development server:

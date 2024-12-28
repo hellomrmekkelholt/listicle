@@ -1,7 +1,43 @@
 # .gitignore
-node_modules/
-.env
-dist/
-.DS_Store
-.next/
+
+# Node modules
+node_modules
+
+# Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js build output
+.next/
+out/
+
+# Production
+build/
+
+# Static files
+/static
+
+# Testing
+coverage/
+
+# Environment variables
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# Miscellaneous
+.DS_Store
+*.pem
+
+# TypeScript
+*.tsbuildinfo
