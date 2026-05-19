@@ -3,16 +3,26 @@ name: Sync Markdown to Notion
 on:
   push:
     branches:
-      - main # Triggers the action every time you push/merge to main
+      - main
 
 jobs:
-  sync-to-notion:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Push changed markdown to Notion
-        uses: step-security/push-md-to-notion@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          notion-token: ${{ secrets.NOTION_TOKEN }}
+          node-node-version: '20'
+
+      - name: Install Dependencies
+        run: |
+          npm install @notionhq/client fs path
+
+      - name: Run Native Sync Script
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+        run: node .github/scripts/sync.js
