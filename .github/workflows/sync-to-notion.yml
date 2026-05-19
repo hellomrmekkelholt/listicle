@@ -1,0 +1,22 @@
+name: Sync Markdown to Notion
+
+on:
+  push:
+    branches:
+      - main # Triggers the action every time you push/merge to main
+    paths:
+      - 'docs/**/*.md' # Runs only if files inside a "docs" folder change
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Push MD to Notion
+        uses: batandwa/notion-md-sync@v2.0.0
+        with:
+          notion-token: ${{ secrets.NOTION_TOKEN }}
+          notion-page-id: ${{ secrets.NOTION_PAGE_ID }}
+          source-dir: 'docs' # Change this if your .md files live in a different folder
