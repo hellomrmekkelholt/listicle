@@ -11,6 +11,20 @@ Hello World
 - Documentation: Swagger UI (@nestjs/swagger)
 - Configuration: @nestjs/config (using .env)
 
+```mermaid
+flowchart TD
+  Entry([IMMEDIA provider path]) --> Meta[Parse request.meta filters]
+  Meta --> Prev[Latest same-channel previousContent<br/>→ meta.trackId cursor or null]
+  Prev --> Filter[(CTE: play_list_entity + track_entity<br/>apply filters above)]
+  Filter --> Cursor{cursor trackId set?}
+  Cursor -->|No| Rand[ORDER BY random LIMIT 1]
+  Cursor -->|Yes| Rank[ORDER BY:<br/>if cursor not in filtered set → random<br/>else next rank after cursor<br/>else wrap to smallest rank]
+  Rand --> Sel{Row selected?}
+  Rank --> Sel
+  Sel -->|No| FailNone["HTTP 200 failed<br/>no content available"]
+  Sel -->|Yes| Resp[HTTP 200 NextResponseDto<br/>trackName url from track_entity<br/>subTitle ← artist<br/>artworkUrl ← channel_entity.artwork_url<br/>meta: trackId artist duration<br/>skipType SKIPABLE]
+```
+
 ## Architectural Constraints
 
 - Structure: Simple module-based architecture under src/modules.
