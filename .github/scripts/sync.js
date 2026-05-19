@@ -1,14 +1,13 @@
 const { Client } = require("@notionhq/client");
+const { markdownToBlocks } = require("@tryfabric/martian");
 const fs = require("fs");
 const path = require("path");
 
-// Initialize Notion Client
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const pageId = process.env.NOTION_PAGE_ID;
 
 async function syncDocs() {
   try {
-    // Look for markdown files inside your docs folder
     const docsDir = path.join(__dirname, "../../docs");
     
     if (!fs.existsSync(docsDir)) {
@@ -17,44 +16,45 @@ async function syncDocs() {
     }
 
     const files = fs.readdirSync(docsDir).filter(file => file.endsWith(".md"));
-    let fullMarkdownContent = "";
+    let finalBlocks = [];
 
-    // Read all markdown files and combine them
+    // Loop through each markdown file
     for (const file of files) {
       const content = fs.readFileSync(path.join(docsDir, file), "utf8");
-      fullMarkdownContent += `\n\n### File: ${file}\n${content}`;
+      
+      // 1. Add a visual separator header for each file
+      finalBlocks.push({
+        object: "block",
+        type: "heading_1",
+        heading_1: { 
+          rich_text: [{ type: "text", text: { content: `📄 File: ${file}` } }],
+          color: "blue_background"
+        }
+      });
+
+      // 2. Translate raw markdown string into Notion API-compliant JSON blocks
+      const fileBlocks = markdownToBlocks(content);
+      finalBlocks = finalBlocks.concat(fileBlocks);
     }
 
-    // Standard markdown strings must be broken down for the Notion API.
-    // For this native script, we pass it as a clean text block chunk.
-    console.log("Clearing existing content and updating Notion page...");
-    
-    // First, clear the page by fetching blocks and deleting them (optional, but ensures clean updates)
+    console.log("Clearing existing content from Notion page...");
     const existingBlocks = await notion.blocks.children.list({ block_id: pageId });
     for (const block of existingBlocks.results) {
       await notion.blocks.delete({ block_id: block.id });
     }
 
-    // Append the fresh text content to the Notion Page
-    await notion.blocks.children.append({
-      block_id: pageId,
-      children: [
-        {
-          object: "block",
-          type: "heading_1",
-          heading_1: { rich_text: [{ type: "text", text: { content: "🚀 Automated Repository Docs Sync" } }] }
-        },
-        {
-          object: "block",
-          type: "paragraph",
-          paragraph: {
-            rich_text: [{ type: "text", text: { content: fullMarkdownContent.substring(0, 2000) } }] // Notion chunk limit safety
-          }
-        }
-      ]
-    });
+    console.log(`Pushing ${finalBlocks.length} structured blocks to Notion...`);
+    
+    // Notion API limits block updates to batches of 100 at a time
+    while (finalBlocks.length > 0) {
+      const chunk = finalBlocks.splice(0, 100);
+      await notion.blocks.children.append({
+        block_id: pageId,
+        children: chunk
+      });
+    }
 
-    console.log("✅ Successfully synced docs to Notion!");
+    console.log("✅ Successfully synced beautifully styled markdown to Notion!");
   } catch (error) {
     console.error("❌ Error syncing to Notion:", error);
     process.exit(1);

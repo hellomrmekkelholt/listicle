@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          npm install @notionhq/client fs path
+          npm install @notionhq/client @tryfabric/martian fs path
 
       - name: Run Native Sync Script
         env:
