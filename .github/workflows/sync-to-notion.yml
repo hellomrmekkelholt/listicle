@@ -4,19 +4,15 @@ on:
   push:
     branches:
       - main # Triggers the action every time you push/merge to main
-    paths:
-      - 'docs/**/*.md' # Runs only if files inside a "docs" folder change
 
 jobs:
-  sync-docs:
+  sync-to-notion:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Push MD to Notion
-        uses: batandwa/notion-md-sync@v2.0.0
+      - name: Push changed markdown to Notion
+        uses: step-security/push-md-to-notion@v1
         with:
           notion-token: ${{ secrets.NOTION_TOKEN }}
-          notion-page-id: ${{ secrets.NOTION_PAGE_ID }}
-          source-dir: 'docs' # Change this if your .md files live in a different folder

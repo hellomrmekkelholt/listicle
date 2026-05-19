@@ -1,3 +1,8 @@
+---
+title: "My Functionality Docs"
+notion_page: https://www.notion.so/Git-Hub-Syn-POC-3657535ab74a8050b367f6ab8aec76ad
+---
+
 # Functionality
 
 Global API prefix: **`/api/v1`**. Swagger UI: **`/api/docs`**. Validation: global `ValidationPipe` with `transform: true` (`src/main.ts`).
