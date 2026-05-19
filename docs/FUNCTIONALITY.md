@@ -82,7 +82,7 @@ These diagrams cover the three **channel** provider paths after shared entry ste
 3. `channel_entity` joined to `provider_entity` by `request.id`; missing row → **200** `id not found`.
 4. `provider_entity.name` is uppercased and routed to one of the flows below; anything else → **200** `unsupported provider`.
 
-Implementation: [`src/modules/next/next.service.ts`](../src/modules/next/next.service.ts).
+Implementation: `src/modules/next/next.service.ts`.
 
 #### 1. External providers (`IHEARTMUSIC`, `SIRIUSXM`, `TUNEIN`)
 
