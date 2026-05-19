@@ -12,17 +12,18 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (Future-Proofed to v24)
         uses: actions/setup-node@v4
         with:
-          node-node-version: '20'
+          node-version: '24' # Fixed typo here and upgraded to Node 24
 
       - name: Install Dependencies
         run: |
-          npm install @notionhq/client @tryfabric/martian fs path
+          npm install @notionhq/client @tryfabric/martian
 
       - name: Run Native Sync Script
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Clears the GitHub runner warning
         run: node .github/scripts/sync.js
